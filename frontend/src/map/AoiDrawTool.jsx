@@ -41,8 +41,10 @@ export default function AoiDrawTool({ isDrawing, setIsDrawing, onCustomAoiCreate
       const minLng = Math.min(startPoint.lng, endPoint.lng);
       const maxLng = Math.max(startPoint.lng, endPoint.lng);
 
-      // Require minimal area drag to avoid accidental clicks
-      if (Math.abs(maxLat - minLat) > 0.005 && Math.abs(maxLng - minLng) > 0.005) {
+      // Require a real drag (not an accidental click) before committing the AOI.
+      // Keep the threshold tiny (~50 m) so a small drawn box is never silently discarded.
+      const isDrag = Math.abs(maxLat - minLat) > 0.0005 || Math.abs(maxLng - minLng) > 0.0005;
+      if (isDrag) {
         const customPolygonGeoJSON = {
           type: 'Polygon',
           coordinates: [[

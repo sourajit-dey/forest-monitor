@@ -11,6 +11,32 @@ from .tiles import get_ndvi_delta_tile_url
 
 logger = logging.getLogger(__name__)
 
+# Materialize at most this many incident zones per analysis. Applied server-side
+# (GEE-side) BEFORE getInfo() so the JSON pulled into the 512MB free-tier Render
+# worker stays small regardless of AOI size.
+MAX_INCIDENTS = 40
+
+
+def _round_geometry(geom: Any, ndigits: int = 5) -> Any:
+    """
+    Rounds all coordinates in a GeoJSON geometry dict in place (~1m precision).
+    Shrinks stored incident geometry dramatically vs full float coordinates.
+    """
+    if not isinstance(geom, dict):
+        return geom
+
+    def walk(coords: Any) -> Any:
+        if isinstance(coords, list):
+            if len(coords) == 2 and all(isinstance(v, (int, float)) for v in coords):
+                return [round(coords[0], ndigits), round(coords[1], ndigits)]
+            return [walk(c) for c in coords]
+        return coords
+
+    gtype = geom.get('type')
+    if gtype in ('Point', 'Polygon', 'MultiPolygon', 'LineString', 'MultiLineString'):
+        geom['coordinates'] = walk(geom.get('coordinates', []))
+    return geom
+
 def run_gee_change_detection(
     aoi_geojson: Dict[str, Any],
     historical_start: str,
@@ -109,19 +135,26 @@ def run_gee_change_detection(
                 maxPixels=1e6
             ).get('ndvi_delta')
 
-            # Simplify geometry for efficient transmission
-            simplified_geom = geom.simplify(maxError=20)
+            # Simplify geometry for efficient transmission, and REPLACE the
+            # feature's geometry with it (the full-resolution 10m geometry is
+            # never materialized, which would blow up worker memory/DB size).
+            simplified_geom = geom.simplify(maxError=30)
 
-            return feature.set({
+            return feature.setGeometry(simplified_geom).set({
                 'area_hectares': area_ha,
                 'ndvi_before': hist_mean,
                 'ndvi_after': curr_mean,
                 'ndvi_change': delta_mean,
                 'centroid_coords': centroid.coordinates(),
-                'simplified_geom': simplified_geom
             })
 
-        processed_features = vectors.map(compute_feature_stats).getInfo()
+        # Sort by largest area and keep only the top-N server-side so .getInfo()
+        # transfers a bounded payload back to the worker (prevents OOM).
+        processed_features = (
+            vectors.map(compute_feature_stats)
+            .limit(MAX_INCIDENTS, 'area_hectares', False)
+            .getInfo()
+        )
 
         incidents: List[Dict[str, Any]] = []
         features = processed_features.get('features', []) if processed_features else []
@@ -135,6 +168,7 @@ def run_gee_change_detection(
             ndvi_after = round(float(props.get('ndvi_after', 0.38)), 3)
             ndvi_change = round(float(props.get('ndvi_change', -0.34)), 3)
             geom = feat.get('geometry', {})
+            _round_geometry(geom)
 
             incidents.append({
                 'incident_index': idx + 1,

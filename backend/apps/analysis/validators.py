@@ -5,7 +5,9 @@ from typing import Any, Dict, Tuple
 from shapely.geometry import shape
 from rest_framework.exceptions import ValidationError
 
-DEFAULT_MAX_AOI_SQKM = float(os.environ.get("MAX_AOI_SQKM", 500.0))
+# 900 km² default so all 5 curated preset AOIs pass validation (Sundarbans ~687,
+# Similipal ~826, Kaziranga ~601, Satpura ~822 km²). Overridable via MAX_AOI_SQKM.
+DEFAULT_MAX_AOI_SQKM = float(os.environ.get("MAX_AOI_SQKM", 900.0))
 
 def estimate_polygon_sqkm(geojson_geom: Dict[str, Any]) -> float:
     """
