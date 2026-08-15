@@ -133,9 +133,9 @@ export default function ReportModal({
                 onClose();
                 onOpenEmailModal(incident);
               }}
-              className="btn-apple-secondary text-xs py-2 px-4"
+              className="btn-apple-ghost text-xs py-2 px-4"
             >
-              <Send className="w-3.5 h-3.5 text-[#0066cc]" />
+              <Send className="w-3.5 h-3.5" />
               Email Advisory Alert
             </button>
 

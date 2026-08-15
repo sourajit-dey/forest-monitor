@@ -5,11 +5,10 @@ export default function LoadingState({ message = "Executing Sentinel-2 change de
   return (
     <div className="absolute inset-0 z-40 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 select-none animate-fade-in">
       <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center space-y-4">
-        {/* Animated Radar Pulse */}
-        <div className="relative flex items-center justify-center w-16 h-16">
-          <div className="absolute w-full h-full rounded-full bg-[#0066cc]/20 animate-ping"></div>
-          <div className="w-12 h-12 rounded-full bg-[#0066cc] flex items-center justify-center text-white shadow-lg">
-            <Satellite className="w-6 h-6 animate-pulse" />
+        {/* Calm Status Indicator */}
+        <div className="flex items-center justify-center w-14 h-14">
+          <div className="w-12 h-12 rounded-full bg-[#0066cc] flex items-center justify-center text-white shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+            <Satellite className="w-5 h-5" />
           </div>
         </div>
 
@@ -22,8 +21,9 @@ export default function LoadingState({ message = "Executing Sentinel-2 change de
           </p>
         </div>
 
-        <div className="w-full bg-[#f0f0f0] h-1.5 rounded-full overflow-hidden">
-          <div className="bg-[#0066cc] h-full rounded-full w-2/3 animate-pulse"></div>
+        {/* Indeterminate Progress Bar */}
+        <div className="w-full h-1 rounded-full bg-[#f0f0f0] overflow-hidden">
+          <div className="h-full rounded-full bg-[#0066cc] indeterminate-bar"></div>
         </div>
 
         <div className="text-[10px] text-[#7a7a7a]">

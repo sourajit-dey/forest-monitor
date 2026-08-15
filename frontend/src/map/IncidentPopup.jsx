@@ -25,8 +25,8 @@ export default function IncidentPopup({
             Incident #{incident.id}
           </span>
         </div>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#fff2e8] text-[#d4380d] border border-[#ffbb96]">
-          Requires Verification
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#f5f5f7] text-[#7a7a7a] border border-[#e0e0e0]">
+          Requires verification
         </span>
       </div>
 
@@ -84,9 +84,9 @@ export default function IncidentPopup({
 
         <button
           onClick={() => onOpenEmailModal(incident)}
-          className="btn-apple-secondary w-full py-1.5 text-xs"
+          className="btn-apple-ghost w-full py-1.5 text-xs"
         >
-          <Send className="w-3 h-3 text-[#0066cc]" />
+          <Send className="w-3 h-3" />
           Dispatch Field Alert Email
         </button>
       </div>

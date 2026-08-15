@@ -88,6 +88,65 @@ h1, h2, h3, .apple-headline {
   transform: scale(0.95);
 }
 
+/* Ghost Blue Secondary Pill (per DESIGN.md button-secondary-pill) */
+.btn-apple-ghost {
+  background-color: transparent;
+  color: var(--apple-blue);
+  border: 1px solid var(--apple-blue);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.btn-apple-ghost:hover {
+  background-color: rgba(0, 102, 204, 0.06);
+}
+
+.btn-apple-ghost:active {
+  transform: scale(0.95);
+}
+
+/* Visible keyboard focus everywhere (per frontend-design skill) */
+.btn-apple-primary:focus-visible,
+.btn-apple-secondary:focus-visible,
+.btn-apple-ghost:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--apple-blue-focus);
+  outline-offset: 2px;
+}
+
+/* Respect reduced motion (per frontend-design skill) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Indeterminate progress bar for analysis loading state */
+@keyframes indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.indeterminate-bar {
+  width: 33%;
+  transform: translateX(-100%);
+  animation: indeterminate 1.4s ease-in-out infinite;
+}
+
 /* Frosted glass surface */
 .frosted-glass {
   background: rgba(245, 245, 247, 0.85);
@@ -103,9 +162,9 @@ h1, h2, h3, .apple-headline {
 
 /* Custom Leaflet Controls Restyling for Apple Look */
 .leaflet-bar {
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 9999px !important;
   overflow: hidden !important;
 }
 
@@ -113,11 +172,15 @@ h1, h2, h3, .apple-headline {
   background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px) !important;
   color: #1d1d1f !important;
-  width: 34px !important;
-  height: 34px !important;
-  line-height: 34px !important;
+  width: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
   border-bottom: 1px solid #f0f0f0 !important;
   transition: background-color 0.15s ease;
+}
+
+.leaflet-bar a:last-child {
+  border-bottom: none !important;
 }
 
 .leaflet-bar a:hover {
