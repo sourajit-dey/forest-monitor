@@ -22,8 +22,8 @@ def get_gemini_model():
     try:
         import google.generativeai as genai
         genai.configure(api_key=api_key)
-        # Use gemini-1.5-flash or gemini-2.0-flash for fast, free-tier officer reports
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # gemini-flash-latest always points to the newest stable Flash model (fast, free-tier)
+        model = genai.GenerativeModel("gemini-flash-latest")
         return model
     except Exception as e:
         logger.error(f"Error configuring Gemini client: {e}")

@@ -92,7 +92,7 @@ class GenerateReportView(APIView):
             report_obj = Report.objects.create(
                 incident=incident,
                 generated_text=report_text,
-                model_name="gemini-1.5-flash"
+                model_name="gemini-flash-latest"
             )
             return Response(ReportSerializer(report_obj).data, status=status.HTTP_201_CREATED)
         except Exception as e:
