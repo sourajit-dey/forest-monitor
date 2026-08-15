@@ -51,6 +51,11 @@ export function useAnalysis() {
     setCurrentEnd(preset.defaultDates.currentEnd);
     setSelectedIncident(null);
     setSelectedIncidentGeoJSON(null);
+    setTileUrlTemplate(null);
+    setIncidents([]);
+    setSummary(null);
+    setAoiAreaSqkm(null);
+    setIsCachedResult(false);
   }, []);
 
   const handleCustomAOI = useCallback((customGeoJSON, customName = "Custom User AOI") => {
@@ -59,6 +64,11 @@ export function useAnalysis() {
     setAoiName(customName);
     setSelectedIncident(null);
     setSelectedIncidentGeoJSON(null);
+    setTileUrlTemplate(null);
+    setIncidents([]);
+    setSummary(null);
+    setAoiAreaSqkm(null);
+    setIsCachedResult(false);
   }, []);
 
   const runAnalysis = useCallback(async () => {

@@ -1,5 +1,9 @@
 import logging
+from datetime import timedelta
+
+from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +18,11 @@ from apps.incidents.models import Incident
 from apps.incidents.serializers import IncidentSummarySerializer
 
 logger = logging.getLogger(__name__)
+
+# Completed AnalysisJob rows are the analysis cache. Rows older than this TTL
+# are treated as expired and pruned so the free-tier DB only retains ~1h of
+# analyses during the hackathon demo (configurable via CACHE_TTL_SECONDS).
+CACHE_TTL = timedelta(seconds=getattr(settings, 'CACHE_TTL_SECONDS', 3600))
 
 class AnalyzeView(APIView):
     """
@@ -42,7 +51,7 @@ class AnalyzeView(APIView):
         aoi_geom, aoi_sqkm = validate_aoi_geojson(raw_aoi)
         validate_date_ranges(hist_start, hist_end, curr_start, curr_end)
 
-        # 2. Caching check
+        # 2. Caching check (1-hour TTL: expired cache rows are pruned)
         cache_key = build_analysis_cache_key(
             aoi_geojson=aoi_geom,
             historical_start=hist_start,
@@ -52,7 +61,14 @@ class AnalyzeView(APIView):
             threshold=threshold
         )
 
-        existing_job = AnalysisJob.objects.filter(cache_key=cache_key, status='complete').first()
+        cutoff = timezone.now() - CACHE_TTL
+        AnalysisJob.objects.filter(created_at__lt=cutoff, status='complete').delete()
+
+        existing_job = AnalysisJob.objects.filter(
+            cache_key=cache_key,
+            status='complete',
+            created_at__gte=cutoff
+        ).first()
         if existing_job:
             logger.info(f"Cache hit for analysis key {cache_key}. Returning stored incidents.")
             incidents = existing_job.incidents.all()

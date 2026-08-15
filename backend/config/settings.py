@@ -82,6 +82,11 @@ CACHES = {
     }
 }
 
+# Analysis result cache retention. Completed AnalysisJob rows (the de-facto
+# analysis cache) older than this are considered expired and pruned so the
+# free-tier DB only holds ~1h of analyses during the demo.
+CACHE_TTL_SECONDS = int(os.environ.get("CACHE_TTL_SECONDS", 3600))
+
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

@@ -97,8 +97,8 @@ export default function MapView({
           />
         )}
 
-        {/* Active AOI Boundary Polygon */}
-        {aoi && (
+        {/* Active AOI Boundary Polygon (hidden once analysis results are displayed) */}
+        {aoi && !tileUrlTemplate && (
           <GeoJSON
             key={`aoi-boundary-${JSON.stringify(aoi)}`}
             data={aoi}
