@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-@api_view(['GET'])
+@api_view(['GET', 'HEAD'])
 def health_check(request):
     """
     Health check endpoint for checking service status and warming Render cold-starts.
