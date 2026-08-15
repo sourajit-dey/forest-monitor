@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { Layers, PenTool, Crosshair, ZoomIn, ZoomOut, Compass } from 'lucide-react';
 import IncidentLayer from './IncidentLayer';
 import AoiDrawTool from './AoiDrawTool';
+
+// Dismisses the AOI boundary box when the user clicks outside it on the map
+function AoiClickDismiss({ aoi, isVisible, isDrawing, onDismiss }) {
+  useMapEvents({
+    click(e) {
+      if (!isVisible || isDrawing || !aoi) return;
+      try {
+        const layer = L.geoJSON(aoi);
+        const bounds = layer.getBounds();
+        if (bounds.isValid() && !bounds.contains(e.latlng)) {
+          onDismiss();
+        }
+      } catch (err) {
+        console.error("Error checking AOI bounds:", err);
+      }
+    },
+  });
+  return null;
+}
 
 // Helper component to smoothly center and fit bounds when AOI changes
 function MapController({ aoi, selectedPreset }) {
@@ -52,6 +71,14 @@ export default function MapView({
   setIsDrawingAoi,
 }) {
   const [baseMap, setBaseMap] = useState('satellite'); // 'satellite' | 'street'
+  const [aoiBoxHidden, setAoiBoxHidden] = useState(false);
+
+  // Re-show the AOI boundary whenever a new area of interest is chosen/drawn
+  useEffect(() => {
+    setAoiBoxHidden(false);
+  }, [aoi]);
+
+  const showAoiBoundary = Boolean(aoi) && !tileUrlTemplate && !aoiBoxHidden;
 
   const baseMapUrls = {
     satellite: {
@@ -97,8 +124,8 @@ export default function MapView({
           />
         )}
 
-        {/* Active AOI Boundary Polygon (hidden once analysis results are displayed) */}
-        {aoi && !tileUrlTemplate && (
+        {/* Active AOI Boundary Polygon (hidden once analysis results are displayed or dismissed) */}
+        {showAoiBoundary && (
           <GeoJSON
             key={`aoi-boundary-${JSON.stringify(aoi)}`}
             data={aoi}
@@ -112,6 +139,14 @@ export default function MapView({
             }}
           />
         )}
+
+        {/* Click-outside-to-dismiss listener for the AOI boundary box */}
+        <AoiClickDismiss
+          aoi={aoi}
+          isVisible={showAoiBoundary}
+          isDrawing={isDrawingAoi}
+          onDismiss={() => setAoiBoxHidden(true)}
+        />
 
         {/* Interactive Incidents Layer */}
         <IncidentLayer
