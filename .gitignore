@@ -31,3 +31,10 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# Agent / IDE metadata (not application code)
+.agents/
+.kilocode/
+skills-lock.json
+AGENT.md
+DESIGN.md
