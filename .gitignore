@@ -1,0 +1,33 @@
+# Environment Variables & Keys
+.env
+.env.local
+.env.*.local
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!skills-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+db.sqlite3
+staticfiles/
+media/
+.venv/
+env/
+venv/
+
+# Node
+node_modules/
+dist/
+build/
+.npm
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
