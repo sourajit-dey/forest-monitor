@@ -40,7 +40,7 @@ class ApiService {
     threshold = -0.3,
     min_area_ha = 0.5,
   }) {
-    return this.request('/api/analyze/', {
+    return this.request('/api/risk-map/', {
       method: 'POST',
       body: JSON.stringify({
         aoi,
