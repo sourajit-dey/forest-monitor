@@ -25,9 +25,6 @@ export default function IncidentPopup({
             Incident #{incident.id}
           </span>
         </div>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-bnb-elevated text-bnb-muted border border-bnb-hairline-dark">
-          Requires verification
-        </span>
       </div>
 
       {/* Primary Metrics Grid */}
