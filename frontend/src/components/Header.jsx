@@ -20,10 +20,10 @@ export default function Header({
           </div>
           <div className="min-w-0">
             <div className="text-[15px] font-bold text-bnb-on-dark leading-tight truncate">
-              Forest Canopy Monitor
+              ARANYA
             </div>
-            <div className="text-[11px] text-bnb-muted leading-tight hidden md:block truncate">
-              Sentinel-2 vegetation-loss detection · WebGIS
+            <div className="text-[11px] text-bnb-muted leading-tight hidden md:block truncate" title="Automated Remote-sensing Analytics for Nature and Yield Assessment">
+              Automated Remote-sensing Analytics for Nature and Yield Assessment
             </div>
           </div>
         </div>
