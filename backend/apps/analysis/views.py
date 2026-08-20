@@ -249,9 +249,35 @@ class RiskMapView(AnalyzeView):
                         try:
                             if DEMO_MODE:
                                 import random
-                                classes = ["High Risk", "Medium Risk", "Low Risk"]
-                                inc.predicted_class = random.choices(classes, weights=[0.4, 0.4, 0.2])[0]
-                                inc.confidence = round(random.uniform(0.7, 0.98), 2)
+                                from ml.predict import predict_risk
+
+                                # Generate realistic fake features to feed into the REAL ONNX model
+                                # This proves the ML model is executing without waiting for live GEE data!
+                                start_ndvi = random.uniform(0.6, 0.9)
+                                ndvi_sequence = []
+                                current_val = start_ndvi
+                                for _ in range(36):
+                                    # Simulate chronological NDVI degradation over 36 months
+                                    current_val = current_val - random.uniform(-0.02, 0.05)
+                                    current_val = max(0.0, min(1.0, current_val))
+                                    ndvi_sequence.append(current_val)
+                                
+                                static_features = [
+                                    random.uniform(0.0, 20.0),      # slope (degrees)
+                                    random.uniform(10.0, 5000.0),   # distance to prior clearing
+                                    random.uniform(50.0, 10000.0)   # distance to settlement
+                                ]
+                                
+                                live_features = {
+                                    'ndvi_sequence': ndvi_sequence,
+                                    'static_features': static_features
+                                }
+                                
+                                # Execute the ACTUAL ML model inference
+                                prediction = predict_risk(live_features)
+                                
+                                inc.predicted_class = prediction['predicted_class']
+                                inc.confidence = prediction['confidence']
                                 inc.save(update_fields=['predicted_class', 'confidence'])
                             else:
                                 # 1. Fetch live features from GEE
