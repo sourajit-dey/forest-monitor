@@ -149,6 +149,7 @@ export default function Sidebar({
                 }}
                 className="w-full text-xs font-medium bg-bnb-elevated border border-bnb-hairline-dark rounded-lg px-3.5 py-2.5 text-bnb-body focus:outline-none focus:border-bnb-primary focus:ring-2 focus:ring-bnb-primary/20"
               >
+                <option value="" disabled hidden>Select a region...</option>
                 {PRESET_AOIS.map((preset) => (
                   <option key={preset.id} value={preset.id} className="bg-bnb-card">
                     {preset.name} ({preset.region})

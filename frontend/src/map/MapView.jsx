@@ -95,8 +95,8 @@ export default function MapView({
     },
   };
 
-  const initialCenter = selectedPreset?.center || [21.95, 88.90];
-  const initialZoom = selectedPreset?.zoom || 11;
+  const initialCenter = selectedPreset?.center || [22.9074, 79.5816];
+  const initialZoom = selectedPreset?.zoom || 5.2;
 
   return (
     <div className="relative w-full h-full">

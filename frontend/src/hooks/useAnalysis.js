@@ -3,9 +3,9 @@ import { api } from '../services/api';
 import { PRESET_AOIS } from '../data/presets';
 
 export function useAnalysis() {
-  const [selectedPreset, setSelectedPreset] = useState(PRESET_AOIS[0]);
-  const [aoi, setAoi] = useState(PRESET_AOIS[0].geometry);
-  const [aoiName, setAoiName] = useState(PRESET_AOIS[0].name);
+  const [selectedPreset, setSelectedPreset] = useState(null);
+  const [aoi, setAoi] = useState(null);
+  const [aoiName, setAoiName] = useState("");
   
   const [historicalStart, setHistoricalStart] = useState(PRESET_AOIS[0].defaultDates.historicalStart);
   const [historicalEnd, setHistoricalEnd] = useState(PRESET_AOIS[0].defaultDates.historicalEnd);
