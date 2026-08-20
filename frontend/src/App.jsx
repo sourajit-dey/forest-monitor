@@ -8,8 +8,10 @@ import ReportModal from './components/ReportModal';
 import EmailModal from './components/EmailModal';
 import LoadingState from './components/LoadingState';
 import ErrorState from './components/ErrorState';
+import Login from './components/Login';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const {
     selectedPreset,
     aoi,
@@ -62,6 +64,10 @@ export default function App() {
     setEmailIncidentTarget(incident);
     setIsEmailModalOpen(true);
   };
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-bnb-canvas-dark font-sans antialiased text-bnb-body">
