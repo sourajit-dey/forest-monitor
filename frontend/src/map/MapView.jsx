@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { Layers, PenTool, Crosshair, ShieldAlert } from 'lucide-react';
+import { Layers, PenTool, Crosshair, ShieldAlert, XCircle } from 'lucide-react';
 import IncidentLayer from './IncidentLayer';
 import AoiDrawTool from './AoiDrawTool';
 
@@ -69,11 +69,11 @@ export default function MapView({
   isGeneratingReport,
   isDrawingAoi,
   setIsDrawingAoi,
+  onClearAnalysis,
 }) {
   const [baseMap, setBaseMap] = useState('satellite'); // 'satellite' | 'dark'
   const [aoiBoxHidden, setAoiBoxHidden] = useState(false);
   const [showAnalysisLayer, setShowAnalysisLayer] = useState(true);
-  const [showRiskLayer, setShowRiskLayer] = useState(false);
 
   // Re-show the AOI boundary whenever a new area of interest is chosen/drawn
   useEffect(() => {
@@ -160,7 +160,7 @@ export default function MapView({
           onGenerateReport={onGenerateReport}
           onOpenEmailModal={onOpenEmailModal}
           isGeneratingReport={isGeneratingReport}
-          showRiskLayer={showRiskLayer}
+          showRiskLayer={true}
         />
 
         {/* Custom Bounding Box / Polygon Drawing Listener */}
@@ -206,18 +206,14 @@ export default function MapView({
           </span>
         </button>
 
-        {incidents && incidents.length > 0 && (
+        {tileUrlTemplate && (
           <button
-            onClick={() => setShowRiskLayer(!showRiskLayer)}
-            className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
-              showRiskLayer
-                ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
-                : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
-            }`}
-            title="Toggle Predicted Risk Zones Layer"
+            onClick={onClearAnalysis}
+            className="px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] bg-[#2b3139] text-[#f6465d] border-[#f6465d]/50 hover:bg-[#343a42]"
+            title="Clear Analysis Results"
           >
-            <ShieldAlert className="w-4 h-4" />
-            <span className="hidden sm:inline">Predicted Risk</span>
+            <XCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Clear Analysis</span>
           </button>
         )}
       </div>

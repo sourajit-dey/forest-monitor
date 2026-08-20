@@ -166,6 +166,17 @@ export function useAnalysis() {
     }
   }, []);
 
+  const clearAnalysis = useCallback(() => {
+    setTileUrlTemplate(null);
+    setIncidents([]);
+    setSummary(null);
+    setAoiAreaSqkm(null);
+    setSelectedIncident(null);
+    setSelectedIncidentGeoJSON(null);
+    setJobId(null);
+    setIsCachedResult(false);
+  }, []);
+
   return {
     selectedPreset,
     aoi,
@@ -208,5 +219,6 @@ export function useAnalysis() {
     selectIncident,
     generateReport,
     sendAlertEmail,
+    clearAnalysis,
   };
 }

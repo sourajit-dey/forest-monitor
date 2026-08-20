@@ -52,6 +52,7 @@ export default function App() {
     selectIncident,
     generateReport,
     sendAlertEmail,
+    clearAnalysis,
   } = useAnalysis();
 
   const [isDrawingAoi, setIsDrawingAoi] = useState(false);
@@ -128,6 +129,7 @@ export default function App() {
             isGeneratingReport={isGeneratingReport}
             isDrawingAoi={isDrawingAoi}
             setIsDrawingAoi={setIsDrawingAoi}
+            onClearAnalysis={clearAnalysis}
           />
         </main>
       </div>
