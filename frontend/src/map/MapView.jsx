@@ -206,18 +206,20 @@ export default function MapView({
           </span>
         </button>
 
-        <button
-          onClick={() => setShowRiskLayer(!showRiskLayer)}
-          className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
-            showRiskLayer
-              ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
-              : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
-          }`}
-          title="Toggle Predicted Risk Zones Layer"
-        >
-          <ShieldAlert className="w-4 h-4" />
-          <span className="hidden sm:inline">Predicted Risk</span>
-        </button>
+        {incidents && incidents.length > 0 && (
+          <button
+            onClick={() => setShowRiskLayer(!showRiskLayer)}
+            className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
+              showRiskLayer
+                ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
+                : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
+            }`}
+            title="Toggle Predicted Risk Zones Layer"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            <span className="hidden sm:inline">Predicted Risk</span>
+          </button>
+        )}
       </div>
 
       {/* Active Drawing Guide Prompt */}
