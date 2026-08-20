@@ -250,7 +250,8 @@ class RiskMapView(AnalyzeView):
                             if DEMO_MODE:
                                 import random
                                 classes = ["High Risk", "Medium Risk", "Low Risk"]
-                                inc.predicted_class = random.choices(classes, weights=[0.4, 0.4, 0.2])[0]
+                                # Realistic distribution: 10% High, 30% Medium, 60% Low (safe)
+                                inc.predicted_class = random.choices(classes, weights=[0.10, 0.30, 0.60])[0]
                                 inc.confidence = round(random.uniform(0.7, 0.98), 2)
                                 inc.save(update_fields=['predicted_class', 'confidence'])
                             else:
