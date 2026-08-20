@@ -16,9 +16,9 @@ export default function IncidentPopup({
   const areaHa = parseFloat(incident.area_hectares);
 
   return (
-    <div className="w-80 p-4 font-sans text-bnb-body">
+    <div className="w-[280px] sm:w-[300px] p-3 font-sans text-bnb-body overflow-hidden">
       {/* Header Badge */}
-      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-bnb-hairline-dark">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-bnb-hairline-dark">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-bnb-trading-down"></span>
           <span className="text-xs font-semibold uppercase tracking-wider text-bnb-muted-strong">
