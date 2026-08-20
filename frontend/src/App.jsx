@@ -11,7 +11,14 @@ import ErrorState from './components/ErrorState';
 import Login from './components/Login';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('aranya_auth') === 'true';
+  });
+
+  const handleLogin = () => {
+    sessionStorage.setItem('aranya_auth', 'true');
+    setIsAuthenticated(true);
+  };
   const {
     selectedPreset,
     aoi,
@@ -66,7 +73,7 @@ export default function App() {
   };
 
   if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />;
+    return <Login onLogin={handleLogin} />;
   }
 
   return (
