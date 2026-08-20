@@ -8,12 +8,64 @@ import {
   FileText,
   Send,
   Zap,
-  PenTool
+  PenTool,
+  Crosshair
 } from 'lucide-react';
 import { PRESET_AOIS } from '../data/presets';
 
+// Instant, deterministic geometry preview using spherical math — no analysis needed.
+const KM_PER_DEG_LAT = 110.574; // average km per degree of latitude
+
+function getRoughGeometryStats(geojson) {
+  if (!geojson || !geojson.coordinates || geojson.coordinates.length === 0) return null;
+
+  const ring = geojson.type === 'Polygon' ? geojson.coordinates[0] : geojson.coordinates;
+  if (!Array.isArray(ring) || ring.length < 3) return null;
+
+  const lngs = ring.map((p) => p[0]);
+  const lats = ring.map((p) => p[1]);
+  const midLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+  const cosLat = Math.cos((midLat * Math.PI) / 180);
+
+  // Local equirectangular projection: x = lng·cos(midLat)·kmPerDeg, y = lat·kmPerDeg
+  let crossSum = 0;
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0; i < ring.length - 1; i++) {
+    const [lng1, lat1] = ring[i];
+    const [lng2, lat2] = ring[i + 1];
+    const x1 = lng1 * KM_PER_DEG_LAT * cosLat;
+    const y1 = lat1 * KM_PER_DEG_LAT;
+    const x2 = lng2 * KM_PER_DEG_LAT * cosLat;
+    const y2 = lat2 * KM_PER_DEG_LAT;
+    const cross = x1 * y2 - x2 * y1;
+    crossSum += cross;
+    cx += (x1 + x2) * cross;
+    cy += (y1 + y2) * cross;
+  }
+
+  const areaSqKm = Math.abs(crossSum) / 2;
+  const areaSigned = crossSum / 2;
+
+  if (Math.abs(areaSigned) < 1e-9) {
+    return {
+      centerLat: midLat,
+      centerLng: (Math.min(...lngs) + Math.max(...lngs)) / 2,
+      areaSqKm,
+    };
+  }
+
+  const inv = 1 / (6 * areaSigned);
+  return {
+    centerLat: (cy * inv) / KM_PER_DEG_LAT,
+    centerLng: (cx * inv) / (KM_PER_DEG_LAT * cosLat),
+    areaSqKm,
+  };
+}
+
 export default function Sidebar({
   selectedPreset,
+  aoi,
   onSelectPreset,
   historicalStart,
   setHistoricalStart,
@@ -39,6 +91,8 @@ export default function Sidebar({
 }) {
   const [activeTab, setActiveTab] = useState('controls'); // 'controls' | 'incidents' | 'arch'
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const geomStats = getRoughGeometryStats(aoi);
 
   const tabs = [
     { key: 'controls', label: 'Controls', icon: Sliders },
@@ -105,6 +159,34 @@ export default function Sidebar({
                 <p className="mt-2 text-[11px] text-bnb-muted leading-relaxed">
                   {selectedPreset.description}
                 </p>
+              )}
+            </div>
+
+            {/* Live AOI geometry telemetry — instant center + rough area, no pending analysis */}
+            <div className="rounded-lg border border-bnb-hairline-dark bg-bnb-elevated p-3 space-y-2">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-bnb-muted-strong">
+                <Crosshair className="w-3.5 h-3.5 text-bnb-primary" />
+                AOI geometry preview
+              </div>
+              {geomStats ? (
+                <>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] text-bnb-muted flex-shrink-0">Center coordinates</span>
+                    <span className="font-mono text-[11px] font-medium text-bnb-body truncate">
+                      {geomStats.centerLat.toFixed(4)}°, {geomStats.centerLng.toFixed(4)}°
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] text-bnb-muted flex-shrink-0">Rough examined area</span>
+                    <span className="font-mono text-[11px] font-bold text-bnb-primary">
+                      {geomStats.areaSqKm < 10 ? geomStats.areaSqKm.toFixed(2) : geomStats.areaSqKm.toFixed(1)} km²
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="text-[11px] text-bnb-muted leading-relaxed">
+                  Select a preset or draw a bounding box to preview geometry.
+                </div>
               )}
             </div>
 

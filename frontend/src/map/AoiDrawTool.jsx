@@ -22,10 +22,10 @@ export default function AoiDrawTool({ isDrawing, setIsDrawing, onCustomAoiCreate
         tempRect.setBounds(bounds);
       } else {
         const rect = L.rectangle(bounds, {
-          color: '#0066cc',
+          color: '#fcd535',
           weight: 2,
-          fillColor: '#0066cc',
-          fillOpacity: 0.15,
+          fillColor: '#fcd535',
+          fillOpacity: 0.12,
           dashArray: '6, 6',
         }).addTo(map);
         setTempRect(rect);
