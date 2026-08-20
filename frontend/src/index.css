@@ -3,124 +3,158 @@
 @tailwind utilities;
 
 :root {
-  --apple-blue: #0066cc;
-  --apple-blue-focus: #0071e3;
-  --apple-blue-dark: #2997ff;
-  --apple-ink: #1d1d1f;
-  --apple-canvas: #ffffff;
-  --apple-parchment: #f5f5f7;
-  --apple-pearl: #fafafc;
-  --apple-tile-1: #272729;
-  --apple-tile-2: #2a2a2c;
-  --apple-tile-3: #252527;
-  --apple-black: #000000;
-  --apple-hairline: #e0e0e0;
+  --bnb-primary: #fcd535;
+  --bnb-primary-active: #f0b90b;
+  --bnb-primary-disabled: #3a3a1f;
+  --bnb-ink: #181a20;
+  --bnb-body: #eaecef;
+  --bnb-muted: #707a8a;
+  --bnb-muted-strong: #929aa5;
+  --bnb-hairline-dark: #2b3139;
+  --bnb-hairline-light: #eaecef;
+  --bnb-canvas-dark: #0b0e11;
+  --bnb-card: #1e2329;
+  --bnb-elevated: #2b3139;
+  --bnb-trading-up: #0ecb81;
+  --bnb-trading-down: #f6465d;
+  --bnb-info: #3b82f6;
+  --bnb-on-dark: #ffffff;
+  --bnb-on-primary: #181a20;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2b3139 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b3139;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-  font-size: 17px;
-  line-height: 1.47;
-  letter-spacing: -0.015em;
-  color: #1d1d1f;
-  background-color: #f5f5f7;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bnb-body);
+  background-color: var(--bnb-canvas-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apple Tight Headline Cadence */
-h1, h2, h3, .apple-headline {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-  letter-spacing: -0.022em;
-  font-weight: 600;
+/* BinanceNova substitute for editorial type; BinancePlex substitute for numbers */
+h1, h2, h3, h4 {
+  font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
-/* Signature Apple Pill Action Button */
-.btn-apple-primary {
-  background-color: var(--apple-blue);
-  color: #ffffff;
-  border-radius: 9999px;
-  padding: 9px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+.font-bnb-number, .number {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Primary CTA: Binance Yellow, black text, rounded-md ---- */
+.btn-primary {
+  background-color: var(--bnb-primary);
+  color: var(--bnb-on-primary);
+  border-radius: 6px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
   border: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.btn-primary:hover {
+  background-color: var(--bnb-primary-active);
+}
+.btn-primary:active {
+  background-color: var(--bnb-primary-active);
+  transform: scale(0.97);
+}
+.btn-primary:disabled {
+  background-color: var(--bnb-primary-disabled);
+  color: var(--bnb-muted);
+  cursor: not-allowed;
+  transform: none;
 }
 
-.btn-apple-primary:hover {
-  background-color: #0071e3;
-}
-
-.btn-apple-primary:active {
-  transform: scale(0.95);
-}
-
-.btn-apple-secondary {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: var(--apple-ink);
-  border: 1px solid var(--apple-hairline);
+/* The top-of-page "THIS is THE action" pill variant */
+.btn-primary-pill {
   border-radius: 9999px;
-  padding: 8px 18px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 13px 30px;
+}
+
+/* ---- Secondary: dark card surface over dark canvas ---- */
+.btn-secondary {
+  background-color: var(--bnb-card);
+  color: var(--bnb-on-dark);
+  border: 1px solid var(--bnb-hairline-dark);
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.btn-secondary:hover {
+  background-color: var(--bnb-elevated);
+}
+.btn-secondary:active {
+  transform: scale(0.97);
 }
 
-.btn-apple-secondary:hover {
-  background-color: #fafafc;
-  border-color: #d2d2d7;
-}
-
-.btn-apple-secondary:active {
-  transform: scale(0.95);
-}
-
-/* Ghost Blue Secondary Pill (per DESIGN.md button-secondary-pill) */
-.btn-apple-ghost {
+/* ---- Tertiary: quiet text button (yellow link per system text-link) ---- */
+.btn-tertiary {
   background-color: transparent;
-  color: var(--apple-blue);
-  border: 1px solid var(--apple-blue);
-  border-radius: 9999px;
-  padding: 8px 18px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--bnb-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
-
-.btn-apple-ghost:hover {
-  background-color: rgba(0, 102, 204, 0.06);
-}
-
-.btn-apple-ghost:active {
-  transform: scale(0.95);
+.btn-tertiary:hover {
+  background-color: rgba(252, 213, 53, 0.08);
 }
 
 /* Visible keyboard focus everywhere (per frontend-design skill) */
-.btn-apple-primary:focus-visible,
-.btn-apple-secondary:focus-visible,
-.btn-apple-ghost:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-tertiary:focus-visible,
 button:focus-visible,
 select:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--apple-blue-focus);
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--bnb-info);
   outline-offset: 2px;
 }
 
@@ -140,72 +174,98 @@ input:focus-visible {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(400%); }
 }
-
 .indeterminate-bar {
   width: 33%;
   transform: translateX(-100%);
   animation: indeterminate 1.4s ease-in-out infinite;
 }
 
-/* Frosted glass surface */
+/* Frosted-glass surfaces kept minimal — Binance prefers flat color blocks */
 .frosted-glass {
-  background: rgba(245, 245, 247, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(30, 35, 41, 0.9);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
 }
 
-.frosted-glass-dark {
-  background: rgba(29, 29, 31, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+/* ---- Leaflet controls: dark Binance restyle ---- */
+.leaflet-container {
+  background: var(--bnb-canvas-dark);
+  font-family: "Inter", sans-serif;
 }
 
-/* Custom Leaflet Controls Restyling for Apple Look */
 .leaflet-bar {
-  border: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-  border-radius: 9999px !important;
+  border: 1px solid var(--bnb-hairline-dark) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+  border-radius: 6px !important;
   overflow: hidden !important;
+  background: var(--bnb-card) !important;
 }
-
 .leaflet-bar a {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px) !important;
-  color: #1d1d1f !important;
-  width: 40px !important;
-  height: 40px !important;
-  line-height: 40px !important;
-  border-bottom: 1px solid #f0f0f0 !important;
+  background-color: var(--bnb-card) !important;
+  color: var(--bnb-body) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  border-bottom: 1px solid var(--bnb-hairline-dark) !important;
   transition: background-color 0.15s ease;
 }
-
 .leaflet-bar a:last-child {
   border-bottom: none !important;
 }
-
 .leaflet-bar a:hover {
-  background-color: #f5f5f7 !important;
+  background-color: var(--bnb-elevated) !important;
+  color: var(--bnb-primary) !important;
+}
+.leaflet-control-zoom a {
+  font-size: 16px !important;
 }
 
+/* Leaflet attribution readable on dark */
+.leaflet-control-attribution {
+  background: rgba(11, 14, 17, 0.75) !important;
+  color: var(--bnb-muted) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--bnb-muted-strong) !important;
+}
+
+/* Incident popup: dark elevated card */
 .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: saturate(180%) blur(20px) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16) !important;
+  background: var(--bnb-card) !important;
+  border: 1px solid var(--bnb-hairline-dark) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
   padding: 0 !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
-
 .leaflet-popup-content {
   margin: 0 !important;
-  line-height: 1.4 !important;
+  line-height: 1.5 !important;
 }
-
 .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--bnb-card) !important;
+}
+.leaflet-popup-close-button {
+  color: var(--bnb-muted) !important;
+  top: 8px !important;
+  right: 8px !important;
+  font-size: 16px !important;
 }
 
-/* Custom Range Slider */
+/* Custom Range Slider — yellow accent per Binance primary */
 input[type="range"] {
-  accent-color: #0066cc;
+  accent-color: var(--bnb-primary);
+}
+
+/* Native form controls pick up the dark surface */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Leaflet marker ping animation for selected incidents */
+@keyframes bnb-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+.bnb-marker-ping {
+  animation: bnb-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }

@@ -18,6 +18,8 @@ class IncidentSummarySerializer(serializers.ModelSerializer):
             'centroid_lng',
             'detected_date',
             'status',
+            'predicted_class',
+            'confidence',
             'created_at'
         ]
 
@@ -43,7 +45,9 @@ class IncidentGeoJSONSerializer(serializers.ModelSerializer):
             'centroid_lng': obj.centroid_lng,
             'detected_date': obj.detected_date,
             'status': obj.status,
-            'status_display': obj.get_status_display()
+            'status_display': obj.get_status_display(),
+            'predicted_class': obj.predicted_class,
+            'confidence': obj.confidence
         }
 
 class ReportSerializer(serializers.ModelSerializer):

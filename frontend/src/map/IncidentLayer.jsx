@@ -3,29 +3,34 @@ import { Marker, Popup, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 import IncidentPopup from './IncidentPopup';
 
-// Custom Apple-styled SVG Incident Marker
-const createIncidentIcon = (areaHa, isSelected) => {
-  const size = isSelected ? 36 : 28;
-  const pulseClass = isSelected ? 'animate-ping' : '';
-  const bgColor = isSelected ? '#b30000' : '#e34a33';
+// Custom Binance-styled SVG Incident Marker (trading-red = detected loss)
+const createIncidentIcon = (areaHa, isSelected, showRiskLayer, predictedClass) => {
+  const size = isSelected ? 38 : 30;
+  const isModerate = showRiskLayer && predictedClass === 'Moderate';
+  const isHigh = showRiskLayer && predictedClass === 'High Risk';
+
+  const bgColor = showRiskLayer
+    ? (isHigh ? '#f6465d' : isModerate ? '#fcd535' : '#f6465d')
+    : '#f6465d';
+  const textColor = bgColor === '#fcd535' ? '#181a20' : '#ffffff';
 
   const html = `
     <div style="position: relative; width: ${size}px; height: ${size}px; display: flex; align-items: center; justify-content: center;">
-      ${isSelected ? `<div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background-color: rgba(227, 74, 51, 0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>` : ''}
+      ${isSelected ? `<div class="bnb-marker-ping" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background-color: rgba(246, 70, 93, 0.35);"></div>` : ''}
       <div style="
-        width: ${size - 6}px;
-        height: ${size - 6}px;
+        width: ${size - 5}px;
+        height: ${size - 5}px;
         border-radius: 50%;
         background-color: ${bgColor};
         border: 2px solid #ffffff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.45);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ffffff;
+        color: ${textColor};
         font-weight: 700;
-        font-size: ${isSelected ? 11 : 9}px;
-        font-family: -apple-system, sans-serif;
+        font-size: ${isSelected ? 12 : 10}px;
+        font-family: Inter, -apple-system, sans-serif;
       ">
         !
       </div>
@@ -50,6 +55,7 @@ export default function IncidentLayer({
   onGenerateReport,
   onOpenEmailModal,
   isGeneratingReport,
+  showRiskLayer,
 }) {
   if (!incidents || incidents.length === 0) return null;
 
@@ -64,14 +70,14 @@ export default function IncidentLayer({
           <Marker
             key={`marker-${incident.id}`}
             position={position}
-            icon={createIncidentIcon(incident.area_hectares, isSelected)}
+            icon={createIncidentIcon(incident.area_hectares, isSelected, showRiskLayer, incident.predicted_class)}
             eventHandlers={{
               click: () => {
                 onSelectIncident(incident);
               },
             }}
           >
-            <Popup className="apple-incident-popup">
+            <Popup className="bnb-incident-popup">
               <IncidentPopup
                 incident={incident}
                 threshold={threshold}
@@ -90,11 +96,11 @@ export default function IncidentLayer({
           key={`geojson-${selectedIncident?.id}-${Date.now()}`}
           data={selectedIncidentGeoJSON}
           style={{
-            color: '#b30000',
+            color: '#f6465d',
             weight: 3,
             opacity: 0.95,
             fillColor: '#fc8d59',
-            fillOpacity: 0.45,
+            fillOpacity: 0.4,
             dashArray: '4, 4',
           }}
         />

@@ -1,5 +1,29 @@
 export const PRESET_AOIS = [
   {
+    id: "korba",
+    name: "Korba District (Trained Model Region)",
+    region: "Chhattisgarh, India",
+    description: "Central Indian district containing the exact area the predictive risk model was trained on.",
+    center: [22.51, 82.62],
+    zoom: 10,
+    defaultDates: {
+      historicalStart: "2023-01-01",
+      historicalEnd: "2023-12-31",
+      currentStart: "2024-01-01",
+      currentEnd: "2024-12-31",
+    },
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [82.13, 22.03],
+        [83.11, 22.03],
+        [83.11, 22.99],
+        [82.13, 22.99],
+        [82.13, 22.03]
+      ]]
+    }
+  },
+  {
     id: "sundarbans",
     name: "Sundarbans Biosphere Reserve (Zone A)",
     region: "West Bengal, India",

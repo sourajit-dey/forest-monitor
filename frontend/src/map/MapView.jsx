@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { Layers, PenTool, Crosshair, ZoomIn, ZoomOut, Compass } from 'lucide-react';
+import { Layers, PenTool, Crosshair, ShieldAlert } from 'lucide-react';
 import IncidentLayer from './IncidentLayer';
 import AoiDrawTool from './AoiDrawTool';
 
@@ -70,8 +70,10 @@ export default function MapView({
   isDrawingAoi,
   setIsDrawingAoi,
 }) {
-  const [baseMap, setBaseMap] = useState('satellite'); // 'satellite' | 'street'
+  const [baseMap, setBaseMap] = useState('satellite'); // 'satellite' | 'dark'
   const [aoiBoxHidden, setAoiBoxHidden] = useState(false);
+  const [showAnalysisLayer, setShowAnalysisLayer] = useState(true);
+  const [showRiskLayer, setShowRiskLayer] = useState(false);
 
   // Re-show the AOI boundary whenever a new area of interest is chosen/drawn
   useEffect(() => {
@@ -86,8 +88,8 @@ export default function MapView({
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       maxZoom: 18,
     },
-    street: {
-      url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    dark: {
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
       attribution: '&copy; <a href="https://carto.com/">CARTO</a>, &copy; OpenStreetMap contributors',
       maxZoom: 19,
     },
@@ -101,7 +103,7 @@ export default function MapView({
       <MapContainer
         center={initialCenter}
         zoom={initialZoom}
-        className="w-full h-full z-0 bg-[#1d1d1f]"
+        className="w-full h-full z-0 bg-bnb-canvas-dark"
         zoomControl={false}
       >
         <MapController aoi={aoi} selectedPreset={selectedPreset} />
@@ -114,8 +116,8 @@ export default function MapView({
           maxZoom={baseMapUrls[baseMap].maxZoom}
         />
 
-        {/* Dynamic GEE TileLayer (NDVI Change Detection) */}
-        {tileUrlTemplate && (
+        {/* Dynamic GEE TileLayer (NDVI Change Detection) — togglable */}
+        {tileUrlTemplate && showAnalysisLayer && (
           <TileLayer
             key={`gee-tiles-${tileUrlTemplate}`}
             url={tileUrlTemplate}
@@ -130,12 +132,12 @@ export default function MapView({
             key={`aoi-boundary-${JSON.stringify(aoi)}`}
             data={aoi}
             style={{
-              color: '#0066cc',
+              color: '#fcd535',
               weight: 2.5,
               opacity: 0.9,
-              fillColor: '#0066cc',
-              fillOpacity: 0.08,
-              dashArray: '5, 5',
+              fillColor: '#fcd535',
+              fillOpacity: 0.05,
+              dashArray: '6, 6',
             }}
           />
         )}
@@ -158,6 +160,7 @@ export default function MapView({
           onGenerateReport={onGenerateReport}
           onOpenEmailModal={onOpenEmailModal}
           isGeneratingReport={isGeneratingReport}
+          showRiskLayer={showRiskLayer}
         />
 
         {/* Custom Bounding Box / Polygon Drawing Listener */}
@@ -166,63 +169,98 @@ export default function MapView({
           setIsDrawing={setIsDrawingAoi}
           onCustomAoiCreated={onCustomAoiCreated}
         />
+
+        {/* Dark Binance-styled zoom control */}
+        <ZoomControl position="bottomright" />
       </MapContainer>
 
       {/* Floating Basemap & Draw Controls */}
       <div className="absolute top-20 right-6 z-10 flex flex-col gap-2">
         <button
-          onClick={() => setBaseMap(baseMap === 'satellite' ? 'street' : 'satellite')}
-          className="px-3 py-2.5 bg-white/90 backdrop-blur-md text-[#1d1d1f] hover:bg-white rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-black/5 transition-all active:scale-95 flex items-center gap-2 text-xs font-medium"
+          onClick={() => setBaseMap(baseMap === 'satellite' ? 'dark' : 'satellite')}
+          className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
+            baseMap === 'dark'
+              ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
+              : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
+          }`}
           title="Toggle Base Map"
         >
-          <Layers className="w-4 h-4 text-[#0066cc]" />
+          <Layers className="w-4 h-4" />
           <span className="hidden sm:inline">
-            {baseMap === 'satellite' ? 'Esri Satellite' : 'Street Map'}
+            {baseMap === 'satellite' ? 'Esri Satellite' : 'Dark Map'}
           </span>
         </button>
 
         <button
           onClick={() => setIsDrawingAoi(!isDrawingAoi)}
-          className={`px-3 py-2.5 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.12)] border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium backdrop-blur-md ${
+          className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
             isDrawingAoi
-              ? 'bg-[#0066cc] text-white border-[#0066cc]'
-              : 'bg-white/90 text-[#1d1d1f] hover:bg-white border-black/5'
+              ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
+              : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
           }`}
           title="Draw Custom AOI Box on Map"
         >
-          <PenTool className={`w-4 h-4 ${isDrawingAoi ? 'text-white' : 'text-[#0066cc]'}`} />
+          <PenTool className="w-4 h-4" />
           <span className="hidden sm:inline">
             {isDrawingAoi ? 'Drawing active' : 'Draw AOI Box'}
           </span>
+        </button>
+
+        <button
+          onClick={() => setShowRiskLayer(!showRiskLayer)}
+          className={`px-3 py-2.5 rounded-md border transition-all active:scale-95 flex items-center gap-2 text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${
+            showRiskLayer
+              ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
+              : 'bg-bnb-card text-bnb-body hover:bg-bnb-elevated border-bnb-hairline-dark'
+          }`}
+          title="Toggle Predicted Risk Zones Layer"
+        >
+          <ShieldAlert className="w-4 h-4" />
+          <span className="hidden sm:inline">Predicted Risk</span>
         </button>
       </div>
 
       {/* Active Drawing Guide Prompt */}
       {isDrawingAoi && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 bg-[#1d1d1f]/90 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-lg border border-white/10 text-xs font-medium flex items-center gap-2">
-          <Crosshair className="w-4 h-4 text-[#2997ff]" />
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 bg-bnb-card border border-bnb-hairline-dark text-bnb-body px-5 py-2.5 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.4)] text-xs font-medium flex items-center gap-2">
+          <Crosshair className="w-4 h-4 text-bnb-primary" />
           Click and drag a rectangle to define the monitoring area
         </div>
       )}
 
-      {/* Map Legend (Bottom Right) */}
-      <div className="absolute bottom-6 right-6 z-10 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-black/5 shadow-lg text-xs text-[#1d1d1f] max-w-xs pointer-events-auto">
-        <div className="font-semibold text-xs mb-2.5 flex items-center gap-1.5 text-[#1d1d1f]">
-          <span className="w-2 h-2 rounded-full bg-[#0066cc]"></span>
-          Sentinel-2 spectral legend
+      {/* Map Legend (Bottom Left so it clears the zoom control) */}
+      <div className="absolute bottom-6 left-6 z-10 bg-bnb-card border border-bnb-hairline-dark p-4 rounded-xl text-xs text-bnb-body max-w-xs pointer-events-auto shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+        <div className="font-semibold text-xs mb-2.5 flex items-center justify-between gap-6 text-bnb-body">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-sm bg-bnb-primary"></span>
+            Sentinel-2 spectral legend
+          </span>
+          {tileUrlTemplate && (
+            <button
+              onClick={() => setShowAnalysisLayer(!showAnalysisLayer)}
+              className={`flex items-center gap-1.5 text-[11px] font-semibold rounded-md px-2 py-1 border transition-all ${
+                showAnalysisLayer
+                  ? 'bg-bnb-primary text-bnb-ink border-bnb-primary'
+                  : 'bg-bnb-elevated text-bnb-muted border-bnb-hairline-dark'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-sm ${showAnalysisLayer ? 'bg-bnb-ink' : 'bg-bnb-muted'}`}></span>
+              Analysis layer {showAnalysisLayer ? 'on' : 'off'}
+            </button>
+          )}
         </div>
-        <div className="space-y-2 text-[11px] text-[#333333]">
+        <div className="space-y-2 text-[11px] text-bnb-muted">
           <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded bg-[#b30000] border border-black/10"></span>
-            <span>Severe loss (ΔNDVI ≤ −0.40)</span>
+            <span className="w-3.5 h-3.5 rounded-sm bg-bnb-trading-down border border-black/20"></span>
+            <span>Detected vegetation-loss zone (Δ NDVI)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded bg-[#fc8d59] border border-black/10"></span>
-            <span>Moderate loss (ΔNDVI ≤ −0.30)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded border-2 border-dashed border-[#0066cc] bg-[#0066cc]/10"></span>
+            <span className="w-3.5 h-3.5 rounded-sm border-2 border-dashed border-bnb-primary bg-bnb-primary/10"></span>
             <span>Monitoring AOI boundary</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-3.5 rounded-sm bg-[#fc8d59] border border-black/20"></span>
+            <span>Moderate loss (Δ near threshold)</span>
           </div>
         </div>
       </div>

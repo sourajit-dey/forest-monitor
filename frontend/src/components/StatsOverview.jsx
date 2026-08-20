@@ -1,54 +1,54 @@
 import React from 'react';
-import { AlertTriangle, TrendingDown, Map, Activity } from 'lucide-react';
+import { AlertTriangle, TrendingDown, Activity, Map } from 'lucide-react';
 
 export default function StatsOverview({ summary, aoiAreaSqkm }) {
   if (!summary) return null;
 
   const metrics = [
     {
-      label: 'Flagged zones',
+      label: 'Detected zones',
       value: summary.total_incidents,
       icon: AlertTriangle,
-      valueClass: 'text-[#1d1d1f]',
+      valueClass: 'text-bnb-primary',
     },
     {
-      label: 'Estimated loss',
+      label: 'Affected area',
       value: summary.total_loss_hectares,
       unit: 'ha',
       icon: TrendingDown,
-      valueClass: 'text-[#1d1d1f]',
+      valueClass: 'text-bnb-primary',
     },
     {
       label: 'Mean NDVI shift',
       value: summary.mean_ndvi_loss,
       icon: Activity,
-      valueClass: 'text-[#b30000]',
+      valueClass: 'text-bnb-trading-down',
     },
     {
       label: 'Monitored area',
       value: aoiAreaSqkm || '--',
       unit: 'km²',
       icon: Map,
-      valueClass: 'text-[#1d1d1f]',
+      valueClass: 'text-bnb-body',
     },
   ];
 
   return (
-    <div className="flex-shrink-0 bg-white/85 backdrop-blur-md border-b border-[#e0e0e0]">
+    <div className="flex-shrink-0 bg-bnb-canvas-dark border-b border-bnb-hairline-dark">
       <div className="grid grid-cols-2 md:grid-cols-4">
         {metrics.map((metric, i) => (
           <div
             key={metric.label}
-            className={`px-6 py-3 ${i > 0 ? 'md:border-l md:border-[#f0f0f0]' : ''}`}
+            className={`px-6 py-3 ${i > 0 ? 'md:border-l md:border-bnb-hairline-dark border-t border-bnb-hairline-dark md:border-t-0' : ''}`}
           >
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#7a7a7a] mb-0.5">
-              <metric.icon className="w-3.5 h-3.5 text-[#b3b3b6]" />
+            <div className="flex items-center gap-1.5 text-[11px] font-medium text-bnb-muted mb-1">
+              <metric.icon className="w-3.5 h-3.5 text-bnb-muted-strong" />
               {metric.label}
             </div>
-            <div className={`text-lg font-semibold tracking-tight ${metric.valueClass}`}>
+            <div className={`font-mono text-xl font-bold tracking-tight leading-none ${metric.valueClass}`}>
               {metric.value}
               {metric.unit && (
-                <span className="text-xs font-normal text-[#7a7a7a] ml-1">{metric.unit}</span>
+                <span className="text-xs font-normal text-bnb-muted ml-1">{metric.unit}</span>
               )}
             </div>
           </div>

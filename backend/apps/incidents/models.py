@@ -23,6 +23,9 @@ class Incident(models.Model):
     centroid_lng = models.FloatField()
     detected_date = models.CharField(max_length=20)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='requires_verification')
+    predicted_class = models.CharField(max_length=100, null=True, blank=True, help_text="Predicted risk class from ML model")
+    confidence = models.FloatField(null=True, blank=True, help_text="Confidence score of the prediction")
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

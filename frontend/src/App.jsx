@@ -63,7 +63,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col w-screen h-screen overflow-hidden bg-[#f5f5f7] font-sans antialiased text-[#1d1d1f]">
+    <div className="flex flex-col w-screen h-screen overflow-hidden bg-bnb-canvas-dark font-sans antialiased text-bnb-body">
       {/* 1. Apple-styled Dual Header (Global Black Nav + Frosted Sub-Nav) */}
       <Header
         aoiName={aoiName}
@@ -84,6 +84,7 @@ export default function App() {
         {/* Collapsible Sidebar */}
         <Sidebar
           selectedPreset={selectedPreset}
+          aoi={aoi}
           onSelectPreset={handleSelectPreset}
           historicalStart={historicalStart}
           setHistoricalStart={setHistoricalStart}
@@ -97,6 +98,7 @@ export default function App() {
           setThreshold={setThreshold}
           minAreaHa={minAreaHa}
           setMinAreaHa={setMinAreaHa}
+          aoiAreaSqkm={aoiAreaSqkm}
           incidents={incidents}
           selectedIncident={selectedIncident}
           onSelectIncident={selectIncident}
@@ -154,8 +156,8 @@ export default function App() {
       )}
 
       {isLoadingGeoJSON && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs flex items-center gap-2 shadow-xl animate-fade-in">
-          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-bnb-elevated border border-bnb-hairline-dark text-bnb-body px-4 py-2 rounded-lg text-xs flex items-center gap-2 shadow-[0_8px_24px_rgba(0,0,0,0.4)] animate-fade-in">
+          <span className="w-3.5 h-3.5 border-2 border-bnb-primary border-t-transparent rounded-full animate-spin"></span>
           Streaming incident vector polygon...
         </div>
       )}
@@ -169,7 +171,8 @@ export default function App() {
 
       {/* 8. Apple Toast Notification */}
       {toastMessage && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1d1d1f]/90 backdrop-blur-md text-white px-5 py-2.5 rounded-full text-xs font-medium shadow-2xl border border-white/10 animate-fade-in">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 bg-bnb-elevated border border-bnb-hairline-dark text-bnb-body px-5 py-2.5 rounded-lg text-xs font-medium shadow-[0_8px_24px_rgba(0,0,0,0.4)] animate-fade-in">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-bnb-primary mr-2"></span>
           {toastMessage}
         </div>
       )}

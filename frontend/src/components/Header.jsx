@@ -10,61 +10,60 @@ export default function Header({
   isCachedResult
 }) {
   return (
-    <header className="w-full select-none z-30 flex flex-col flex-shrink-0">
-      {/* Upper 44px Pure Black Global Nav (per DESIGN.md global-nav spec) */}
-      <div className="h-[44px] bg-[#000000] text-white px-6 flex items-center justify-between text-xs font-normal tracking-tight border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <Trees className="w-4 h-4 text-[#2997ff]" />
-            <span className="tracking-tight text-[13px] font-semibold">Forest Canopy WebGIS</span>
-          </div>
-          <span className="text-[#7a7a7a] hidden md:inline">|</span>
-          <span className="text-[#cccccc] text-[11px] hidden md:inline">
-            Deterministic Sentinel-2 Change Detection
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-[11px] text-[#7a7a7a]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#34c759]"></span>
-          <span className="hidden sm:inline">Sentinel-2 data live</span>
-        </div>
-      </div>
-
-      {/* Lower 52px Frosted Glass Sub-Nav (per DESIGN.md sub-nav-frosted spec) */}
-      <div className="h-[52px] frosted-glass border-b border-[#e0e0e0] px-6 flex items-center justify-between">
-        {/* Left: Active AOI & Quick Stats */}
+    <header className="w-full select-none z-30 flex flex-col flex-shrink-0 border-b border-bnb-hairline-dark bg-bnb-canvas-dark">
+      {/* 64px Dark Top Nav (per DESIGN.md top-nav-dark) */}
+      <div className="h-16 px-5 flex items-center justify-between gap-4">
+        {/* Left: Brand mark */}
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-base md:text-lg font-semibold tracking-tight text-[#1d1d1f] truncate">
-            {aoiName || "Select Area of Interest"}
+          <div className="flex items-center justify-center w-9 h-9 rounded-md bg-bnb-primary text-bnb-ink flex-shrink-0 shadow-[0_4px_14px_rgba(252,213,53,0.25)]">
+            <Trees className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[15px] font-bold text-bnb-on-dark leading-tight truncate">
+              Forest Canopy Monitor
+            </div>
+            <div className="text-[11px] text-bnb-muted leading-tight hidden md:block truncate">
+              Sentinel-2 vegetation-loss detection · WebGIS
+            </div>
+          </div>
+        </div>
+
+        {/* Center: Active AOI context */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1 justify-center px-2">
+          <span className="text-sm font-medium text-bnb-body truncate">
+            {aoiName || "Select an area of interest"}
           </span>
           {aoiAreaSqkm && (
-            <span className="text-xs text-[#7a7a7a] bg-[#f5f5f7] px-2.5 py-0.5 rounded-full border border-[#e0e0e0] font-mono flex-shrink-0">
+            <span className="text-[11px] text-bnb-muted-strong bg-bnb-card px-2.5 py-1 rounded-md border border-bnb-hairline-dark font-mono flex-shrink-0">
               {aoiAreaSqkm} km²
             </span>
           )}
-
           {incidentCount > 0 && (
-            <span className="flex items-center gap-1.5 text-xs text-[#7a7a7a] flex-shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#e34a33]"></span>
-              {incidentCount} flagged {incidentCount === 1 ? 'zone' : 'zones'}
+            <span className="flex items-center gap-1.5 text-[11px] text-bnb-muted flex-shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-bnb-trading-down"></span>
+              {incidentCount} {incidentCount === 1 ? 'zone' : 'zones'}
             </span>
           )}
           {isCachedResult && (
-            <span className="text-[11px] text-[#7a7a7a] flex-shrink-0">· cached result</span>
+            <span className="text-[11px] text-bnb-muted flex-shrink-0">· cached</span>
           )}
         </div>
 
-        {/* Right: Primary Run Button (Apple pill CTA) */}
-        <div className="flex items-center flex-shrink-0">
+        {/* Right: status + primary Run CTA */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-bnb-muted">
+            <span className="w-1.5 h-1.5 rounded-full bg-bnb-trading-up"></span>
+            Sentinel-2 data live
+          </div>
           <button
             onClick={onRunAnalysis}
             disabled={isAnalyzing}
-            className="btn-apple-primary text-xs py-2 px-5"
+            className="btn-primary btn-primary-pill text-[13px]"
           >
             {isAnalyzing ? (
               <>
-                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                <span>Processing Sentinel-2...</span>
+                <span className="w-3.5 h-3.5 border-2 border-bnb-ink/30 border-t-bnb-ink rounded-full animate-spin"></span>
+                <span>Processing</span>
               </>
             ) : (
               <>

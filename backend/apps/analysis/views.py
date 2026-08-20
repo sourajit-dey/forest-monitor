@@ -14,6 +14,8 @@ from .serializers import AnalysisRequestSerializer
 from .validators import validate_aoi_geojson, validate_date_ranges, validate_threshold
 from caching.cache_keys import build_analysis_cache_key
 from gee.change_detection import run_gee_change_detection
+from gee.features import get_live_features
+from ml.predict import predict_risk
 from apps.incidents.models import Incident
 from apps.incidents.serializers import IncidentSummarySerializer
 
@@ -174,3 +176,39 @@ class AnalyzeView(APIView):
                 'error': 'Remote sensing change detection failed.',
                 'details': str(e)
             }, status=status.HTTP_502_BAD_GATEWAY)
+
+class RiskMapView(AnalyzeView):
+    """
+    POST /api/risk-map/
+    Predictive layer endpoint that enriches incidents with ML risk scores.
+    """
+    def post(self, request):
+        # Delegate to the standard AnalyzeView pipeline for the hackathon
+        # but intercept the response to add placeholder predictions to the incidents
+        
+        response = super().post(request)
+        if response.status_code == status.HTTP_201_CREATED or response.status_code == status.HTTP_200_OK:
+            job_id = response.data.get('job_id')
+            if job_id:
+                incidents = Incident.objects.filter(analysis_job_id=job_id)
+                for inc in incidents:
+                    if not inc.predicted_class:
+                        try:
+                            # 1. Fetch live features from GEE
+                            live_features = get_live_features(inc.geometry)
+                            # 2. Run prediction
+                            prediction = predict_risk(live_features)
+                            
+                            inc.predicted_class = prediction['predicted_class']
+                            inc.confidence = prediction['confidence']
+                            inc.save(update_fields=['predicted_class', 'confidence'])
+                        except Exception as e:
+                            logger.error(f"Error predicting risk for incident {inc.id}: {e}")
+                            # fallback
+                            inc.predicted_class = "Error"
+                            inc.confidence = 0.0
+                            inc.save(update_fields=['predicted_class', 'confidence'])
+                
+                # Update response data with the enriched incidents
+                response.data['incidents'] = IncidentSummarySerializer(incidents, many=True).data
+        return response
