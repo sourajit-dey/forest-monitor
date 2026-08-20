@@ -6,11 +6,12 @@ import IncidentPopup from './IncidentPopup';
 // Custom Binance-styled SVG Incident Marker (trading-red = detected loss)
 const createIncidentIcon = (areaHa, isSelected, showRiskLayer, predictedClass) => {
   const size = isSelected ? 38 : 30;
-  const isModerate = showRiskLayer && predictedClass === 'Moderate';
+  const isModerate = showRiskLayer && predictedClass === 'Medium Risk';
   const isHigh = showRiskLayer && predictedClass === 'High Risk';
+  const isLow = showRiskLayer && predictedClass === 'Low Risk';
 
   const bgColor = showRiskLayer
-    ? (isHigh ? '#f6465d' : isModerate ? '#fcd535' : '#f6465d')
+    ? (isHigh ? '#f6465d' : isModerate ? '#fcd535' : isLow ? '#0ecb81' : '#f6465d')
     : '#f6465d';
   const textColor = bgColor === '#fcd535' ? '#181a20' : '#ffffff';
 

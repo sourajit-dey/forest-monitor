@@ -26,6 +26,11 @@ logger = logging.getLogger(__name__)
 # analyses during the hackathon demo (configurable via CACHE_TTL_SECONDS).
 CACHE_TTL = timedelta(seconds=getattr(settings, 'CACHE_TTL_SECONDS', 3600))
 
+# HACKATHON DEMO MODE
+# Bypasses Google Earth Engine and ML prediction to ensure 100% reliable 
+# presentations without API timeouts. Generates realistic fake data locally.
+DEMO_MODE = True
+
 class AnalyzeView(APIView):
     """
     POST /api/analyze/
@@ -113,16 +118,49 @@ class AnalyzeView(APIView):
                     status='pending'
                 )
 
-            # 4. Run GEE Pipeline
-            tile_url, detected_incidents = run_gee_change_detection(
-                aoi_geojson=aoi_geom,
-                historical_start=hist_start,
-                historical_end=hist_end,
-                current_start=curr_start,
-                current_end=curr_end,
-                threshold=threshold,
-                min_area_ha=min_area_ha
-            )
+            # 4. Run GEE Pipeline (OR DEMO MODE)
+            if DEMO_MODE:
+                import time, random
+                from shapely.geometry import shape
+                
+                time.sleep(2.5) # Simulate processing latency
+                
+                geom = shape(aoi_geom)
+                minx, miny, maxx, maxy = geom.bounds
+                
+                detected_incidents = []
+                # Ensure the points stay roughly inside the box
+                padding_x = (maxx - minx) * 0.1
+                padding_y = (maxy - miny) * 0.1
+                
+                for i in range(random.randint(5, 12)):
+                    lat = random.uniform(miny + padding_y, maxy - padding_y)
+                    lng = random.uniform(minx + padding_x, maxx - padding_x)
+                    detected_incidents.append({
+                        'geometry': {
+                            "type": "Polygon",
+                            "coordinates": [[[lng-0.002, lat-0.002], [lng+0.002, lat-0.002], [lng+0.002, lat+0.002], [lng-0.002, lat+0.002], [lng-0.002, lat-0.002]]]
+                        },
+                        'area_hectares': round(random.uniform(0.5, 4.5), 2),
+                        'ndvi_before': round(random.uniform(0.5, 0.8), 2),
+                        'ndvi_after': round(random.uniform(0.1, 0.3), 2),
+                        'ndvi_change': round(random.uniform(-0.6, -0.2), 2),
+                        'centroid_lat': lat,
+                        'centroid_lng': lng,
+                        'detected_date': '2024-06-15',
+                        'status': 'requires_verification'
+                    })
+                tile_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+            else:
+                tile_url, detected_incidents = run_gee_change_detection(
+                    aoi_geojson=aoi_geom,
+                    historical_start=hist_start,
+                    historical_end=hist_end,
+                    current_start=curr_start,
+                    current_end=curr_end,
+                    threshold=threshold,
+                    min_area_ha=min_area_ha
+                )
 
             # 5. Persist Incidents
             incident_objs = []
@@ -194,14 +232,21 @@ class RiskMapView(AnalyzeView):
                 for inc in incidents:
                     if not inc.predicted_class:
                         try:
-                            # 1. Fetch live features from GEE
-                            live_features = get_live_features(inc.geometry)
-                            # 2. Run prediction
-                            prediction = predict_risk(live_features)
-                            
-                            inc.predicted_class = prediction['predicted_class']
-                            inc.confidence = prediction['confidence']
-                            inc.save(update_fields=['predicted_class', 'confidence'])
+                            if DEMO_MODE:
+                                import random
+                                classes = ["High Risk", "Medium Risk", "Low Risk"]
+                                inc.predicted_class = random.choices(classes, weights=[0.4, 0.4, 0.2])[0]
+                                inc.confidence = round(random.uniform(0.7, 0.98), 2)
+                                inc.save(update_fields=['predicted_class', 'confidence'])
+                            else:
+                                # 1. Fetch live features from GEE
+                                live_features = get_live_features(inc.geometry)
+                                # 2. Run prediction
+                                prediction = predict_risk(live_features)
+                                
+                                inc.predicted_class = prediction['predicted_class']
+                                inc.confidence = prediction['confidence']
+                                inc.save(update_fields=['predicted_class', 'confidence'])
                         except Exception as e:
                             logger.error(f"Error predicting risk for incident {inc.id}: {e}")
                             # fallback
