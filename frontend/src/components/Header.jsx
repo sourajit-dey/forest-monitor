@@ -19,7 +19,7 @@ export default function Header({
             <Trees className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <div className="text-[15px] font-bold text-bnb-on-dark leading-tight truncate">
+            <div className="text-xl font-bold font-display tracking-wide text-bnb-on-dark leading-tight truncate">
               ARANYA
             </div>
             <div className="text-[11px] text-bnb-muted leading-tight hidden md:block truncate" title="Automated Remote-sensing Analytics for Nature and Yield Assessment">

@@ -39,7 +39,8 @@ export default {
           "Roboto",
           "sans-serif"
         ],
-        mono: ["JetBrains Mono", "ui-monospace", "monospace"]
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        display: ["Space Grotesk", "sans-serif"]
       },
       boxShadow: {
         'bnb-card': '0 0 0 1px rgba(43, 49, 57, 0.9)',
