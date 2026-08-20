@@ -32,7 +32,7 @@ export default {
       },
       fontFamily: {
         sans: [
-          "Inter",
+          "Outfit",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
