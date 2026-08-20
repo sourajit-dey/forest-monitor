@@ -122,11 +122,21 @@ class AnalyzeView(APIView):
             if DEMO_MODE:
                 import time, random
                 from shapely.geometry import shape
+                from datetime import datetime, timedelta
                 
                 time.sleep(7.0) # Simulate longer processing latency to look like real GEE
                 
                 geom = shape(aoi_geom)
                 minx, miny, maxx, maxy = geom.bounds
+                
+                # Parse the monitoring window dates so we can generate incidents within them
+                try:
+                    c_start = datetime.strptime(curr_start, "%Y-%m-%d")
+                    c_end = datetime.strptime(curr_end, "%Y-%m-%d")
+                    date_range_days = (c_end - c_start).days
+                except:
+                    c_start = datetime.now()
+                    date_range_days = 30
                 
                 detected_incidents = []
                 # Ensure the points stay roughly inside the box
@@ -136,6 +146,11 @@ class AnalyzeView(APIView):
                 for i in range(random.randint(5, 12)):
                     lat = random.uniform(miny + padding_y, maxy - padding_y)
                     lng = random.uniform(minx + padding_x, maxx - padding_x)
+                    
+                    # Generate a random date within the monitoring window
+                    random_days = random.randint(0, max(1, date_range_days))
+                    fake_date = (c_start + timedelta(days=random_days)).strftime("%Y-%m-%d")
+                    
                     detected_incidents.append({
                         'geometry': {
                             "type": "Polygon",
@@ -147,7 +162,7 @@ class AnalyzeView(APIView):
                         'ndvi_change': round(random.uniform(-0.6, -0.2), 2),
                         'centroid_lat': lat,
                         'centroid_lng': lng,
-                        'detected_date': '2024-06-15',
+                        'detected_date': fake_date,
                         'status': 'requires_verification'
                     })
                 tile_url = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
