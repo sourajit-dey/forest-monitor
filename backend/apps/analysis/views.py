@@ -123,7 +123,7 @@ class AnalyzeView(APIView):
                 import time, random
                 from shapely.geometry import shape
                 
-                time.sleep(2.5) # Simulate processing latency
+                time.sleep(7.0) # Simulate longer processing latency to look like real GEE
                 
                 geom = shape(aoi_geom)
                 minx, miny, maxx, maxy = geom.bounds
